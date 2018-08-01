@@ -1,1 +1,15 @@
 ---
+all:
+  children:
+    APIC:
+      hosts:
+        aci-demo.sandbox.wwtatc.local: {}
+
+    arista:
+      hosts:
+        arista-7280-075367.sandbox.wwtatc.local: {}
+      vars:
+        ansible_connection: network_cli
+        ansible_network_os: eos
+        ansible_become: yes
+        ansible_become_method: enable

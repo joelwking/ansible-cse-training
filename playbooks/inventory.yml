@@ -12,6 +12,7 @@ all:
             ansible_network_os: eos
             ansible_become: yes
             ansible_become_method: enable
+            ansible_ssh_user: admin
             
     csr1000v:
       hosts:
@@ -22,8 +23,16 @@ all:
             ansible_network_os: ios
             ansible_become: yes
             ansible_become_method: enable
-       
+            ansible_ssh_user: admin
+            # ansible_ssh_pass: can be set here or from encrypted vault file
+            # See: https://stackoverflow.com/questions/30209062/ansible-how-to-encrypt-some-variables-in-an-inventory-file-in-a-separate-vault
+
     juniper:
       hosts:
         junos-asset-016206.sandbox.wwtatc.local: {}
         
+    nexus:
+      hosts:
+        nex-3048-a.sandbox.wwtatc.local: {}
+        nex-3048-b.sandbox.wwtatc.local: {}
+        nex-3048-e.sandbox.wwtatc.local: {}

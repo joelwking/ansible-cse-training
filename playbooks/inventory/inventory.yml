@@ -1,5 +1,8 @@
 ---
 all:
+  hosts:
+    sandboxapicdc.cisco.com: {}
+
   children:
     APIC:
       hosts:

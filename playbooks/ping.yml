@@ -1,0 +1,33 @@
+#!/usr/bin/ansible-playbook
+---
+#
+#      Copyright (c) 2018 World Wide Technology, Inc.
+#      All rights reserved.
+#
+#      author: Joel W. King,  World Wide Technology
+#
+#      usage:
+#
+#         Verify your inventory formatting by using  'ansible-inventory -i ./inventory/class/inventory.yml --list'
+#
+#         ./ping.yml -i ./inventory/class/inventory.yml
+#         ./ping.yml -i ./inventory/class/inventory.yml  --limit 'all:!csr1000v-2.sandbox.wwtatc.local'
+#         ./ping.yml -i ./inventory/class/inventory.yml  --tags=debug
+#         ./ping.yml -i ./inventory/class/inventory.yml  -
+#         ./ping.yml -i ./inventory/class/inventory.yml  --limit=sandboxapicdc.cisco.com
+# 
+#
+- name: Verify inventory and connectivity to hosts from control node
+  hosts: all
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Ping all the hosts in inventory
+      ping:
+
+    - name: Debug task
+      debug:
+        msg: "Inventory hostname: {{ inventory_hostname }}"
+        verbosity: 1
+      tags: debug

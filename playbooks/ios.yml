@@ -1,0 +1,6 @@
+---
+#
+- name: Gather facts from the switch
+  ios_facts:
+      authorize: yes
+      gather_subset: all

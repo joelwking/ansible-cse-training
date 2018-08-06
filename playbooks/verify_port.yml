@@ -1,0 +1,46 @@
+#!/usr/bin/ansible-playbook
+---
+#
+#      Copyright (c) 2018 World Wide Technology, Inc.
+#      All rights reserved.
+#
+#      author: Joel W. King,  World Wide Technology
+#
+#      usage:
+#
+#         ./verify_port.yml  -i inventory/class/inventory.yml -e 'target_host=arista int_port=48'
+#         ./verify_port.yml -e 'target_host=csr1000v int_port=3 verify_port=True  int_type=GigabitEthernet' -i inventory/class/inventory.yml
+#
+#      This playbook is an example of how to use the connection 'network_cli', 'provider' is no longer required.
+#
+#
+#
+- name:   Playbook managing switch port configurations
+  hosts:  "{{ target_host }}"                              # The target switch name or group  is passed to the playbook
+  gather_facts: no
+
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"                   # Encrypt with ansible-vault!
+
+  vars:    
+    verify_port: True                                      # Either enable or disable the assertion logic
+    int_type: Ethernet                                     # Specify as extra vars on the command line
+    int_port: 48
+    int_name: "{{ int_type + int_port }}"                  # Combine the variables here to simplify references in the playbook
+
+    credential:                                            # ansible_network_os is either ios or eos
+      ios: "{{ ios.password }}"
+      eos: "{{ eos.password }}"
+    ansible_ssh_pass: "{{ credential[ansible_network_os] }}"
+                                                           
+  tasks:
+    - name: Import the appropriate task based on the OS type
+      include_tasks: "{{ ansible_network_os }}.yml"
+      
+    - name: Verify the port is not in use
+      assert:
+        msg: "Playbook failed, port {{ int_name }} is {{ ansible_net_interfaces[int_name].lineprotocol }}/{{ ansible_net_interfaces[int_name].operstatus }}"
+        that:
+          - "ansible_net_interfaces[int_name].lineprotocol != 'up'"
+          - "ansible_net_interfaces[int_name].operstatus == 'notconnect'"
+      when: verify_port|bool == True

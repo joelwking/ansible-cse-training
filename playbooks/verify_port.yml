@@ -11,10 +11,27 @@
 #         ./verify_port.yml  -i inventory/class/inventory.yml -e 'target_host=arista int_port=48'
 #         ./verify_port.yml -e 'target_host=csr1000v int_port=3 verify_port=True  int_type=GigabitEthernet' -i inventory/class/inventory.yml
 #
-#      This playbook is an example of how to use the connection 'network_cli', 'provider' is no longer required.
+#      Concepts illustrated in this playbook:
 #
+#          Connection type 'network_cli' is used by this playbook. The 'provider' dictionary and connection 'local' is
+#          no longer required and being deprecated. 
 #
+#          The hosts variable is not a static definition, rather specified by an 'extra var' when executing the playbook.
+#          The variable 'target_host' can be a single host, or an inventory group.
+# 
+#          Credentials are input using a file 'passwords.yml' in the playbook directory. As a best practice, this file
+#          should be encrypted with Ansible-Vault. An alternative would be to set The variable 'ansible_ssh_pass' 
+#          in the inventory file by an Ansible-Vault encrypted string.
 #
+#          The value of 'ansible_network_os' is used to determine the manufacture of the device and is set in the 
+#          inventory file to either 'ios' or 'eos'. We have created a dictionary named 'credential' and use 
+#          'ansible_networi_os' as an index to set the appropriate credential.
+#
+#          The task to gather facts is included from either eos.yml or ios.yml based on the value of 'ansible_network_os'.
+#
+#          After gathering facts, we optionally verify if the specified port is not in use by using an assertion
+#          to check if the port is connect and not in an 'up' state.
+
 - name:   Playbook managing switch port configurations
   hosts:  "{{ target_host }}"                              # The target switch name or group  is passed to the playbook
   gather_facts: no
@@ -34,7 +51,7 @@
     ansible_ssh_pass: "{{ credential[ansible_network_os] }}"
                                                            
   tasks:
-    - name: Import the appropriate task based on the OS type
+    - name: Include the appropriate task based on the OS type
       include_tasks: "{{ ansible_network_os }}.yml"
       
     - name: Verify the port is not in use

@@ -32,7 +32,16 @@ all:
 
     juniper:
       hosts:
-        junos-asset-016206.sandbox.wwtatc.local: {}
+        junos-asset-016206.sandbox.wwtatc.local:
+            ansible_connection: network_cli
+            ansible_network_os: junos
+            ansible_become: yes
+            ansible_become_method: enable
+            ansible_ssh_user: admin
+
+    juniper_provider:
+      hosts:
+         junos-provider.sandbox.wwtatc.local: {}
         
     nexus:
       hosts:

@@ -1,0 +1,107 @@
+#!/usr/bin/ansible-playbook
+---
+#
+#      Copyright (c) 2018 World Wide Technology, Inc.
+#      All rights reserved.
+#
+#      author: Joel W. King,  World Wide Technology
+#
+#      usage:
+#
+#          ./switch_interface.yml
+#
+#
+#       Concepts illustrated in this playbook:
+#
+#           This playbook contrasts declarative and imperative configuration management of 
+#           a Nexus (NX-OS) switch interface
+#
+#           For a complete listing of NX-OS Ansible modules, see:
+#                http://docs.ansible.com/ansible/latest/list_of_network_modules.html#nxos
+#
+#           This playbook uses the Jinja template module to substitute variables into a 
+#           configuration template.
+#
+#           The module 'include_vars' is used to read a credential variables into the playbook.
+#
+#           The 'provider' dictionary is used to provide username, password and target host to the
+#           NX-OS modules.
+#    
+#           The lookup plugin is used to read a file into a variable.
+#
+- name:   Nexus interface configuration
+  hosts:  nex-3048-a.sandbox.wwtatc.local
+  gather_facts: no
+  connection: local
+
+  vars:
+    interface:
+        description: "Configured by Ansible"
+        duplex: full
+        vlan: 100
+        name: Ethernet1/40
+        state: down
+        mode: layer2
+
+    provider:
+      host: "{{ inventory_hostname }}"
+      username: "{{ios.username}}"
+      password: "{{ios.password}}"
+      validate_certs: no
+
+  tasks:
+    - name: Decrypt the password file
+      include_vars: "{{ playbook_dir }}/passwords.yml"
+
+    #
+    #  Declarative configuration management
+    #
+
+    - name: Use nxos_interface to set the port to a Layer2 (or Layer3) interface
+      nxos_interface:
+        provider: "{{ provider }}"
+        interface: "{{ interface.name }}"
+        description: "{{ interface.description }}"
+        mode: "{{ interface.mode }}"
+
+    - name: Use nxos_interface to admin up/down the interface
+      nxos_interface:
+        provider: "{{ provider }}"
+        interface: "{{ interface.name }}"
+        admin_state: "{{ interface.state }}"
+
+    #
+    #  Imperative configuration management
+    #
+
+    - name: template the configuration
+      template:
+        src: "{{ playbook_dir }}/templates/nexus_interface.j2"
+        dest: "{{ playbook_dir }}/files/__nexus_interface.cfg"
+
+    - name: Use nxos_config to Load the configuration file(s)
+      nxos_config:
+        provider: "{{ provider }}"
+        save_when: modified
+        lines: "{{ lookup('file', '{{ playbook_dir }}/files/__nexus_interface.cfg') }}"
+
+    - name: Use nxos_command to Issue commands to device
+      nxos_command:
+        provider: "{{ provider }}"
+        commands:
+          - send * Nexus VLAN example playbook saving configuration
+          - copy running-config startup-config
+
+    #
+    #  Query the switch for interface configuration
+    #
+
+    - name: Use nxos_facts to query the facts about the device
+      nxos_facts:
+        provider: "{{ provider }}"
+        gather_subset: all
+      tags: facts
+
+    - name: "Display the configuration of the {{ inventory_hostname }} port {{ interface.name }}"
+      debug:
+        msg: "{{ ansible_net_interfaces[interface.name] }}"

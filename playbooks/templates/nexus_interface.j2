@@ -1,0 +1,11 @@
+default interface {{ interface.name }}
+interface {{ interface.name }}
+ description {{ interface.description }}
+ duplex {{ interface.duplex }}
+ speed 1000
+ switchport mode access
+ switchport access vlan {{ interface.vlan }}
+ snmp trap link-status
+ spanning-tree port type edge
+ spanning-tree bpdufilter disable
+ no shut

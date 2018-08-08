@@ -8,14 +8,38 @@
 #
 #      usage:
 #
-#         Verify your inventory formatting by using  'ansible-inventory -i ./inventory/class/inventory.yml --list'
-#
 #         ./ping.yml -i ./inventory/class/inventory.yml
 #         ./ping.yml -i ./inventory/class/inventory.yml  --limit 'all:!csr1000v-2.sandbox.wwtatc.local'
 #         ./ping.yml -i ./inventory/class/inventory.yml  --tags=debug
-#         ./ping.yml -i ./inventory/class/inventory.yml  -
+#         ./ping.yml -i ./inventory/class/inventory.yml  -vvv
 #         ./ping.yml -i ./inventory/class/inventory.yml  --limit=sandboxapicdc.cisco.com
+#         ./ping.yml -i ./inventory/class/inventory.yml --step
+#         ./ping.yml -i ./inventory/class/inventory.yml --start-at-task="Debug task"
 # 
+#       Concepts illustrated in this playbook:
+#
+#            Verify your inventory formatting by using  'ansible-inventory -i ./inventory/class/inventory.yml --list'
+#
+#            This playbook by default executes on the group 'all', meaning all hosts defined in the inventory file,
+#            and verifies the control node (the host executing this playbook) can reach the target hosts. Some of the
+#            hosts specified in the inventory are only accessable via a VPN connection to the Advanced Technology Center
+#            (ATC).  Some hosts specified in inventory use connection type 'network_cli' and are expected to fail.
+#    
+#            Execute the playbook with varying debug levels (-v, -vv, -vvv) and examine how that influences the output
+#            from the debug task.
+#    
+#            Change gather_facts from 'no' to 'yes' and examine how facts gathered from the localhost can be referenced.
+#
+#            Use 'ansible --version' to determine what configuration file Ansible is using.
+#
+#            Modify the 'inventory' variable in your ansible.cfg file to eliminate referencing the inventory file on
+#            each execution.
+#
+#            Use 'ansible-config dump  --only-changed' to verify which values in your configuration have changed.
+#
+#            Set an environmental variable to specify your modified configuration file:
+#              export ANSIBLE_CONFIG="$HOME/ansible/playbooks/ansible.cfg"
+#
 #
 - name: Verify inventory and connectivity to hosts from control node
   hosts: all

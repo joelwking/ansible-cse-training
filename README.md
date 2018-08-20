@@ -7,18 +7,25 @@ This lab material is designed to augment the instructor lead Red Hat Ansible Tow
 If you do not currently have a [GitHub](github.com) and [GitLab](gitlab.com) account, please create a personal (free) account on each platform.
 
 #### Intro to Git for Network Engineers
-When Implementing Infrastructure as Code concepts, the Source of Truth for work-flow, credentials, and configuration data will be stored centrally in a Source (Version) Control System
+When Implementing Infrastructure as Code concepts, the Source of Truth for work-flow, credentials, and configuration data will be stored centrally in a Source (Version) Control System. Refer to these resources:
 
  * https://www.slideshare.net/joelwking/introduction-to-git-for-network-engineers-lab-guide
  * https://www.slideshare.net/joelwking/introduction-to-git-for-network-engineers
 
+The above links provide a working knowledge of Git to complete the remaining training excercises.
+
 ### Chrome Postman
-Download and install Chrome Postman at https://www.getpostman.com/.
+Download and install Chrome Postman at https://www.getpostman.com/. 
+
+You can verify the installation by following the training material at https://www.getpostman.com/docs/v6/postman/launching_postman/sending_the_first_request.
+
+When you feel comfortable that you have Postman installed and can issue an API call to the *docs.postman-echo.com/* server, make an API call to the APIC controller using the following collection.
 
 #### Postman collection
 This [collection](https://gist.github.com/joelwking/a819d1f00748122eaeeb3eda7edf9c10) can be used as an example on how to use Chrome Postman for basic API calls to an ACI fabric. After installing Postman, download and import the collection.
 
 ### Labs
+These labs make use of networking devices including APIC controllers on ACI fabrics, Arista (EoS), Cisco IOS routers and Nexus switches.
 
 #### Create copies of the training repositories
 A fork is a copy of a repository. Forking a repository allows you to create a copy under your account as a starting point for your labs.
@@ -29,7 +36,7 @@ Fork these repositories from your GitHub account:
  * https://github.com/joelwking/ansible-cse-training
 
 #### ACI Ansible Sandbox
-This is an on-demand lab in the ATC [portal](atcportal.apps.wwt.com)
+This is an on-demand lab in the ATC [portal](atcportal.apps.wwt.com).
 
 Portal link: https://atcportal.apps.wwt.com/#/practices/network/capability/2aafd0b14f031f005ec5e57d0210c712
 Lab guide: http://labs.wwtlab.net/lab-guides/aci-automation-lab-guide/welcome.html
@@ -44,7 +51,7 @@ For this exercise, you will modify the playbook and inventory to use the Cisco A
 Modify `aci_tenant_demo.yml` to use the variable `inventory_hostname` in the `aci_tenant` module. Modify the `hosts:` variable in the playbook to reference a group name you create called `ciscosandbox`. Create the group in your inventory with the proper host. Update your credentials accordingly.
 
 
-#### Create and delete an EPG in the demo fabric
+##### Create and delete an EPG in the demo fabric
 Using the playbook `aci_tenant_demo.yml` as a guide, create a new playbook to Manage End Point Groups (EPG) objects (fv:AEPg)
 
 References:
@@ -111,11 +118,8 @@ Training Course for Ansible Network Automation
   * https://github.com/gzapodea/BRKNMS_2935_Orlando
   * https://github.com/hpreston
 
-### DevNet  
+### DevNet and CiscoLive 2018 Orlando
   * https://developer.cisco.com/
-
-### CiscoLive 2018 Orlando
-
   * [Micro-Service Applications for Infrastructure People](https://clnv.s3.amazonaws.com/2018/usa/pdf/BRKCLD-1009.pdf)
   * [From Zero to Network Programmability in 120 minutes – DNA Center, RESTCONF, NETCONF, WebEx Teams and ServiceNow](https://clnv.s3.amazonaws.com/2017/usa/pdf/BRKRST-2935.pdf)
 

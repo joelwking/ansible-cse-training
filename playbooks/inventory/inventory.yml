@@ -30,7 +30,7 @@ all:
             # ansible_ssh_pass: can be set here or from encrypted vault file
             # See: https://stackoverflow.com/questions/30209062/ansible-how-to-encrypt-some-variables-in-an-inventory-file-in-a-separate-vault
 
-    juniper:
+    juniper_networkcli:
       hosts:
         junos-asset-016206.sandbox.wwtatc.local:
             ansible_connection: network_cli
@@ -39,7 +39,7 @@ all:
             ansible_become_method: enable
             ansible_ssh_user: admin
 
-    juniper_provider:
+    juniper:
       hosts:
          junos-provider.sandbox.wwtatc.local: {}
         
@@ -48,3 +48,13 @@ all:
         nex-3048-a.sandbox.wwtatc.local: {}
         nex-3048-b.sandbox.wwtatc.local: {}
         nex-3048-e.sandbox.wwtatc.local: {}
+
+    cat3850:
+      hosts:
+        cat3850-asset86597.sandbox.wwtatc.local: {}
+      vars:
+            ansible_connection: network_cli
+            ansible_network_os: ios
+            ansible_become: yes
+            ansible_become_method: enable
+            ansible_ssh_user: admin

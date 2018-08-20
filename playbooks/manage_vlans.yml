@@ -1,0 +1,80 @@
+#!/usr/bin/ansible-playbook
+---
+#
+#      Copyright (c) 2018 World Wide Technology, Inc.
+#      All rights reserved.
+#
+#      author: Joel W. King,  World Wide Technology
+#
+#      usage:
+#
+#         ./manage_vlans.yml -i inventory/class/inventory.yml  -e "vlan_state=False vlan_id=30 vlan_name=VLAN30"
+#
+#
+#      Enable NETCONF on the switch using CLI (or a playbook) if now already enabled:
+#      
+#          set system services netconf ssh port 830
+#
+#      Concepts illustrated in this playbook:
+#
+#          This playbook uses NETCONF as the transport for managing JunOS.
+#          Management of VLANs using a declarative approach.
+#
+#      Caveats:
+#          Testing with Ansible 2.6.0, using connection type 'network_cli' throws error:
+#              fatal: [junos-asset-016206.sandbox.wwtatc.local]: FAILED! => {"changed": false, 
+#              "msg": "Connection type 'network_cli' is not valid for 'junos_vlan' module. 
+#              Please see https://docs.ansible.com/ansible/latest/network/user_guide/platform_junos.html"}
+# 
+#          https://docs.ansible.com/ansible/latest/network/user_guide/platform_junos.html#using-cli-in-ansible-2-6
+#
+#          JunOS uses the VLAN name as the key to the configuration rather than the VLAN number. 
+#
+#          The junos_vlan module does not accept the keyworks 'present' or 'absent', rather booleans instead.
+#
+- name: Manage VLANs on JunOS devices
+  hosts: juniper 
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"                   # Encrypt with ansible-vault!
+
+  vars:    
+    provider: 
+      host: "{{ inventory_hostname }}"
+      username: "{{ junos.username }}"
+      password: "{{ junos.password }}"
+      port: 830                                            # Default NETCONF port
+
+    state:                                                 # Module doesn't use  present or absent 
+      present: True
+      absent: False
+
+    vlan_id: 30
+    vlan_name: VLAN30 
+    vlan_state: "{{ state['present'] }}" 
+
+  tasks:
+    - name: Checking NETCONF connectivity
+      wait_for: 
+        host: "{{ inventory_hostname }}" 
+        port: "{{ provider.port }}"  
+        timeout: 5
+
+    - name: Configure VLAN on switch
+      junos_vlan:
+        provider: "{{ provider }}"
+        description: "{{ vlan_name }} configured by Ansible"
+        active: "{{ vlan_state }}"
+        vlan_id: "{{ vlan_id }}"
+        name: "{{ vlan_name }}"
+
+    - name: Gather facts about the device
+      junos_facts:
+        provider: "{{ provider }}"
+        gather_subset: all 
+
+    - name: Display network OS version and environmental
+      debug:
+        msg: "OS: {{ ansible_net_version }} temperature: {{ ansible_net_routing_engines['0'].temperature }}"

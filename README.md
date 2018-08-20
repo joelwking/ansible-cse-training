@@ -87,11 +87,61 @@ For information on ISE switch port configuration, do a web search for `ise switc
 
 This playbook, `switch_interface.yml`, contrasts declarative and imperative configuration management of a Nexus (NX-OS) switch interface. In the imperative mode, the playbook uses the Jinja template module to create a configuration file from a template.  It also demonstrates using the `lookup` plugin is used to read a file into a playbook variable. 
 
-Use the module `nxos_banner` along with a Jinja template, to create a custom MOTD banner which includs a variable passed to the playbook from a Ansible Tower survey or extra var.
+Use the module `nxos_banner` along with a Jinja template, to create a custom MOTD banner which includes a variable passed to the playbook from a Ansible Tower survey or extra var.
 
-#### JunOS netconf
+#### JunOS NETCONF
 
-*THIS SECTION INTENTIONALLY LEFT BLANK*
+Ths playbook, `manage_vlans.yml` demonstrates using Ansible for managing JunOS devices. The playbook uses the declarative approach to creating and enabling and disabling VLANS. 
+
+It uses NETCONF as the transport method to configure and query the device.
+
+Execute `manage_vlans.yml` with the usage example provided in the playbook to modify VLAN30 on the device.
+
+##### View configuration
+For those not familiar with JunOS CLI, use the following example to verify the configuration:
+```
+$ ssh admin@junos-asset-016206.sandbox.wwtatc.local
+Password:
+--- JUNOS 14.1X53-D27.3 built 2015-06-17 06:20:35 UTC
+{master:0}
+admin> configure
+Entering configuration mode
+
+{master:0}[edit]
+admin# show vlans
+VLAN30 {
+    description "VLAN30 configured by Ansible";
+    vlan-id 30;
+}
+default {
+    vlan-id 1;
+    l3-interface irb.0;
+}
+test-vlan {
+    description "test-vlan configured by Ansible";
+    vlan-id 20;
+}
+
+{master:0}[edit]
+admin# exit
+Exiting configuration mode
+
+{master:0}
+admin> exit
+
+Connection to junos-asset-016206.sandbox.wwtatc.local closed.
+
+```
+
+##### Code Beautify
+Execute the playbook using the `-v` option. The `junos_facts` module will output to STDOUT the facts gathered from the switch. Open a browser to the JSON Viewer at https://codebeautify.org/jsonviewer. Copy and paste the text:
+
+```
+{"ansible_facts":
+     COPY EVERYTHING HERE
+"changed": false}
+```
+into the left dialog box on the screen and hit the *Beautify* button. Hit *Save and Share* and share it with a classmate.
 
 ####  F5 Programmability/Automation Training Class
 

@@ -35,6 +35,8 @@ Fork these repositories from your GitHub account:
  * https://github.com/joelwking/ansible-aci
  * https://github.com/joelwking/ansible-cse-training
 
+Note: updates have been made since your fork, see [Keeping a GitHub Fork Updated](https://robots.thoughtbot.com/keeping-a-github-fork-updated).
+
 #### ACI Ansible Sandbox
 This is an on-demand lab in the ATC [portal](atcportal.apps.wwt.com).
 
